@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="row">
+        <!-- Sidebar -->
+        <nav class="col-md-3 col-lg-2 d-md-block bg-light sidebar">
+            <div class="position-sticky">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#">
+                            <i class="fas fa-tachometer-alt"></i> Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('manage_donors') }}">
+                            <i class="fas fa-users"></i> Manage Donors
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('blood_requests') }}">
+                            <i class="fas fa-tint"></i> Blood Requests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('inventory') }}">
+                            <i class="fas fa-box"></i> Inventory
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                <h1 class="h2">Admin Dashboard</h1>
+            </div>
+
+            <!-- Recent Donor Registrations -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Recent Donor Registrations</h5>
+                </div>
+                <div class="card-body">
+                    {% if recent_donors %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Blood Group</th>
+                                        <th>Phone</th>
+                                        <th>Address</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for donor in recent_donors %}
+                                    <tr>
+                                        <td>{{ donor.name }}</td>
+                                        <td>{{ donor.blood_group }}</td>
+                                        <td>{{ donor.phone }}</td>
+                                        <td>{{ donor.address }}</td>
+                                        <td>
+                                            {% if donor.is_available %}
+                                                <span class="badge bg-success">Available</span>
+                                            {% else %}
+                                                <span class="badge bg-warning">Unavailable</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center">No recent donor registrations</p>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Blood Inventory Status -->
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Blood Inventory Status</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        {% for item in inventory %}
+                        <div class="col-md-3 mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6 class="card-title">{{ item.blood_group }}</h6>
+                                    <p class="card-text">
+                                        Quantity: {{ item.quantity }}<br>
+                                        Status: 
+                                        {% if item.status == 'Critical' %}
+                                            <span class="badge bg-danger">Critical</span>
+                                        {% elif item.status == 'Low' %}
+                                            <span class="badge bg-warning">Low</span>
+                                        {% else %}
+                                            <span class="badge bg-success">Available</span>
+                                        {% endif %}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pending Blood Requests -->
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Pending Blood Requests</h5>
+                </div>
+                <div class="card-body">
+                    {% if pending_requests %}
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Hospital</th>
+                                        <th>Blood Group</th>
+                                        <th>Quantity</th>
+                                        <th>Urgency</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for request in pending_requests %}
+                                    <tr>
+                                        <td>{{ request.hospital.name }}</td>
+                                        <td>{{ request.blood_group }}</td>
+                                        <td>{{ request.quantity }}</td>
+                                        <td>
+                                            {% if request.urgency == 'High' %}
+                                                <span class="badge bg-danger">High</span>
+                                            {% elif request.urgency == 'Medium' %}
+                                                <span class="badge bg-warning">Medium</span>
+                                            {% else %}
+                                                <span class="badge bg-info">Low</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ request.created_at.strftime('%Y-%m-%d') }}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-success" onclick="approveRequest({{ request.id }})">Approve</button>
+                                            <button class="btn btn-sm btn-danger" onclick="rejectRequest({{ request.id }})">Reject</button>
+                                        </td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-center">No pending blood requests</p>
+                    {% endif %}
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
+<script>
+function approveRequest(requestId) {
+    if (confirm('Are you sure you want to approve this request?')) {
+        fetch(`/admin/approve-request/${requestId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to approve request');
+            }
+        });
+    }
+}
+
+function rejectRequest(requestId) {
+    if (confirm('Are you sure you want to reject this request?')) {
+        fetch(`/admin/reject-request/${requestId}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload();
+            } else {
+                alert('Failed to reject request');
+            }
+        });
+    }
+}
+</script>
+{% endblock %} 

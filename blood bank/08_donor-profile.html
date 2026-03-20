@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Profile - LifeFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Check if user is logged in
+            const sessionResponse = await fetch('/check-session');
+            const sessionData = await sessionResponse.json();
+            
+            if (!sessionData.logged_in) {
+                window.location.href = '01_webpage.html';
+                return;
+            }
+
+            // Load donor profile
+            const profileResponse = await fetch('/donor/profile');
+            const profileData = await profileResponse.json();
+            
+            if (profileData.success) {
+                const donor = profileData.data;
+                
+                // Update profile information
+                document.getElementById('fullName').textContent = `${donor.first_name} ${donor.last_name}`;
+                document.getElementById('email').textContent = donor.email;
+                document.getElementById('phone').textContent = donor.phone;
+                document.getElementById('address').textContent = `${donor.address}, ${donor.city}, ${donor.state} ${donor.pincode}`;
+                document.getElementById('bloodType').textContent = donor.blood_group;
+                document.getElementById('healthStatus').textContent = donor.health_status;
+                
+                if (donor.last_donation_date) {
+                    const lastDonation = new Date(donor.last_donation_date);
+                    document.getElementById('lastDonation').textContent = lastDonation.toLocaleDateString();
+                    
+                    // Calculate next eligible donation (56 days after last donation)
+                    const nextDonation = new Date(lastDonation);
+                    nextDonation.setDate(nextDonation.getDate() + 56);
+                    document.getElementById('nextDonation').textContent = nextDonation.toLocaleDateString();
+                }
+            }
+
+            // Handle edit button click
+            const editButton = document.getElementById('editButton');
+            editButton.addEventListener('click', function() {
+                window.location.href = '02_donor-registration.html?edit=true';
+            });
+
+            // Handle logout
+            const logoutButton = document.getElementById('logoutButton');
+            logoutButton.addEventListener('click', async function() {
+                try {
+                    const response = await fetch('/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+                    if (data.success) {
+                        window.location.href = '01_webpage.html';
+                    }
+                } catch (error) {
+                    console.error('Error logging out:', error);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-['Pacifico'] text-red-600">LifeFlow</h1>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="01_webpage.html" class="text-gray-800 hover:text-red-600 transition-colors">Home</a>
+                <a href="01_webpage.html#about" class="text-gray-600 hover:text-red-600 transition-colors">About</a>
+                <a href="01_webpage.html#donate" class="text-gray-600 hover:text-red-600 transition-colors">Donate</a>
+                <a href="01_webpage.html#contact" class="text-gray-600 hover:text-red-600 transition-colors">Contact</a>
+                <button id="logoutButton" class="text-gray-600 hover:text-red-600 transition-colors flex items-center">
+                    <i class="ri-logout-box-line mr-2"></i>
+                    Logout
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Donor Profile -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto">
+                <div class="bg-white rounded-lg shadow-sm p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h2 class="text-3xl font-bold text-gray-900">Donor Profile</h2>
+                        <button id="editButton" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors">
+                            <i class="ri-edit-line mr-2"></i>Edit Profile
+                        </button>
+                    </div>
+
+                    <!-- Profile Information -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Personal Information -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Personal Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                                    <p id="fullName" class="text-gray-900">Loading...</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
+                                    <p id="bloodType" class="text-gray-900">Loading...</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Health Status</label>
+                                    <p id="healthStatus" class="text-gray-900">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div>
+                            <h3 class="text-xl font-semibold text-gray-900 mb-4">Contact Information</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                    <p id="email" class="text-gray-900">Loading...</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                                    <p id="phone" class="text-gray-900">Loading...</p>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                                    <p id="address" class="text-gray-900">Loading...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Donation History -->
+                    <div class="mt-8">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-4">Donation History</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Last Donation Date</label>
+                                <p id="lastDonation" class="text-gray-900">No donation history</p>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Next Eligible Donation</label>
+                                <p id="nextDonation" class="text-gray-900">Not available</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-['Pacifico'] text-white">LifeFlow</h1>
+                    </div>
+                    <p class="text-gray-400">Saving lives through blood donation.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="01_webpage.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="01_webpage.html#about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="01_webpage.html#donate" class="text-gray-400 hover:text-white transition-colors">Donate</a></li>
+                        <li><a href="01_webpage.html#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-map-pin-line mr-2"></i>
+                            123 Blood Bank Street, City
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-phone-line mr-2"></i>
+                            +1 234 567 890
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-mail-line mr-2"></i>
+                            info@lifeflow.com
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-facebook-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-twitter-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-instagram-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-linkedin-fill text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 LifeFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 

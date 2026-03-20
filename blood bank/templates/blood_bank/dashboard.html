@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Blood Bank Profile</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ blood_bank.name }}</p>
+                    <p><strong>Address:</strong> {{ blood_bank.address }}</p>
+                    <p><strong>City:</strong> {{ blood_bank.city.name }}</p>
+                    <p><strong>State:</strong> {{ blood_bank.city.state.name }}</p>
+                    <p><strong>Contact:</strong> {{ blood_bank.contact_number }}</p>
+                    <p><strong>Email:</strong> {{ blood_bank.email }}</p>
+                    <p><strong>License:</strong> {{ blood_bank.license_number }}</p>
+                    <p><strong>Status:</strong> 
+                        {% if blood_bank.is_verified %}
+                            <span class="badge bg-success">Verified</span>
+                        {% else %}
+                            <span class="badge bg-warning">Pending Verification</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Blood Inventory</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Blood Group</th>
+                                    <th>Quantity</th>
+                                    <th>Last Updated</th>
+                                    <th>Expiry Date</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in inventory %}
+                                <tr>
+                                    <td>{{ item.blood_group }}</td>
+                                    <td>{{ item.quantity }} ml</td>
+                                    <td>{{ item.last_updated.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ item.expiry_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>
+                                        {% if item.status == 'Available' %}
+                                            <span class="badge bg-success">Available</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Unavailable</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <a href="{{ url_for('blood_bank.manage_inventory') }}" class="btn btn-danger">Manage Inventory</a>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="mb-0">Recent Donations</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>Donor</th>
+                                    <th>Blood Group</th>
+                                    <th>Quantity</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for donation in recent_donations %}
+                                <tr>
+                                    <td>{{ donation.donation_date.strftime('%Y-%m-%d') }}</td>
+                                    <td>{{ donation.donor.name }}</td>
+                                    <td>{{ donation.blood_group }}</td>
+                                    <td>{{ donation.quantity }} ml</td>
+                                    <td>
+                                        {% if donation.status == 'completed' %}
+                                            <span class="badge bg-success">Completed</span>
+                                        {% elif donation.status == 'pending' %}
+                                            <span class="badge bg-warning">Pending</span>
+                                        {% else %}
+                                            <span class="badge bg-danger">Cancelled</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

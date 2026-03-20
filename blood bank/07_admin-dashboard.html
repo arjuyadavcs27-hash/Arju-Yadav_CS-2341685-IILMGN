@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - LifeFlow Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Admin Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-['Pacifico'] text-red-600">LifeFlow Admin</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <div class="relative">
+                    <button id="notificationsBtn" class="text-gray-600 hover:text-red-600 transition-colors">
+                        <i class="ri-notification-3-line text-xl"></i>
+                        <span id="notificationBadge" class="absolute -top-1 -right-1 bg-red-600 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
+                    </button>
+                    <!-- Notifications Dropdown -->
+                    <div id="notificationsDropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg py-2 z-10">
+                        <div class="px-4 py-2 border-b border-gray-100">
+                            <h3 class="text-sm font-medium text-gray-900">Notifications</h3>
+                        </div>
+                        <div class="max-h-96 overflow-y-auto">
+                            <!-- Sample Notifications -->
+                            <div class="notification-item px-4 py-3 hover:bg-red-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="ri-drop-line text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">New Blood Request</p>
+                                        <p class="text-xs text-gray-500">City Hospital requested 2 units of A+ blood</p>
+                                        <p class="text-xs text-gray-400 mt-1">2 minutes ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-item px-4 py-3 hover:bg-red-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="ri-user-add-line text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">New Donor Registration</p>
+                                        <p class="text-xs text-gray-500">John Doe registered as a new donor</p>
+                                        <p class="text-xs text-gray-400 mt-1">15 minutes ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="notification-item px-4 py-3 hover:bg-red-50 cursor-pointer">
+                                <div class="flex items-start">
+                                    <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                                        <i class="ri-calendar-line text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <p class="text-sm font-medium text-gray-900">Appointment Reminder</p>
+                                        <p class="text-xs text-gray-500">Blood donation appointment scheduled for tomorrow</p>
+                                        <p class="text-xs text-gray-400 mt-1">1 hour ago</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="px-4 py-2 border-t border-gray-100">
+                            <button id="markAllReadBtn" class="text-xs text-red-600 hover:text-red-700">Mark all as read</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="relative">
+                    <button id="adminProfileBtn" class="flex items-center space-x-2 text-gray-600 hover:text-red-600 transition-colors">
+                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center">
+                            <i class="ri-user-fill text-red-600"></i>
+                        </div>
+                        <span id="adminNameDisplay" class="font-medium">Admin</span>
+                    </button>
+                    <!-- Profile Dropdown -->
+                    <div id="profileDropdown" class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg py-2 z-10">
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-red-50">Profile</a>
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-red-50">Settings</a>
+                        <button id="logoutBtn" class="block w-full text-left px-4 py-2 text-gray-700 hover:bg-red-50">Logout</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Admin Dashboard Content -->
+    <div class="container mx-auto px-4 py-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Quick Stats -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Total Donors</p>
+                        <h3 class="text-2xl font-bold text-gray-900">1,234</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="ri-user-heart-line text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span class="text-green-600 text-sm font-medium">+12% from last month</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Blood Inventory</p>
+                        <h3 class="text-2xl font-bold text-gray-900">456 units</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="ri-drop-line text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span class="text-yellow-600 text-sm font-medium">-5% from last week</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Pending Requests</p>
+                        <h3 class="text-2xl font-bold text-gray-900">23</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="ri-inbox-line text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span class="text-red-600 text-sm font-medium">+3 new today</span>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <p class="text-gray-600">Appointments</p>
+                        <h3 class="text-2xl font-bold text-gray-900">45</h3>
+                    </div>
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i class="ri-calendar-line text-red-600 text-xl"></i>
+                    </div>
+                </div>
+                <div class="mt-4">
+                    <span class="text-green-600 text-sm font-medium">+8 scheduled today</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Activity and Quick Actions -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+            <!-- Recent Activity -->
+            <div class="md:col-span-2 bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Recent Activity</h2>
+                <div class="space-y-4">
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-user-add-line text-red-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-900">New donor registered</p>
+                            <p class="text-gray-600 text-sm">John Doe registered as a new donor</p>
+                            <p class="text-gray-500 text-xs">2 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-drop-line text-red-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-900">Blood donation completed</p>
+                            <p class="text-gray-600 text-sm">Jane Smith donated 1 unit of O+ blood</p>
+                            <p class="text-gray-500 text-xs">4 hours ago</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <div class="w-8 h-8 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-hospital-line text-red-600"></i>
+                        </div>
+                        <div>
+                            <p class="text-gray-900">Blood request received</p>
+                            <p class="text-gray-600 text-sm">City Hospital requested 2 units of A+ blood</p>
+                            <p class="text-gray-500 text-xs">6 hours ago</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
+                <div class="space-y-3">
+                    <button id="addDonorBtn" class="w-full flex items-center space-x-2 text-left p-3 rounded-lg hover:bg-red-50 transition-colors">
+                        <i class="ri-user-add-line text-red-600"></i>
+                        <span>Add New Donor</span>
+                    </button>
+                    <button id="processRequestBtn" class="w-full flex items-center space-x-2 text-left p-3 rounded-lg hover:bg-red-50 transition-colors">
+                        <i class="ri-hospital-line text-red-600"></i>
+                        <span>Process Blood Request</span>
+                    </button>
+                    <button id="scheduleAppointmentBtn" class="w-full flex items-center space-x-2 text-left p-3 rounded-lg hover:bg-red-50 transition-colors">
+                        <i class="ri-calendar-line text-red-600"></i>
+                        <span>Schedule Appointment</span>
+                    </button>
+                    <button id="generateReportBtn" class="w-full flex items-center space-x-2 text-left p-3 rounded-lg hover:bg-red-50 transition-colors">
+                        <i class="ri-file-list-line text-red-600"></i>
+                        <span>Generate Report</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blood Inventory Status -->
+        <div class="mt-8">
+            <h2 class="text-xl font-semibold text-gray-900 mb-4">Blood Inventory Status</h2>
+            <div class="bg-white rounded-lg shadow-sm p-6">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div class="border border-red-200 rounded-lg p-4">
+                        <p class="text-gray-600">O+</p>
+                        <h3 class="text-2xl font-bold text-gray-900">120 units</h3>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-green-600 h-2 rounded-full" style="width: 80%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-red-200 rounded-lg p-4">
+                        <p class="text-gray-600">A+</p>
+                        <h3 class="text-2xl font-bold text-gray-900">85 units</h3>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-yellow-600 h-2 rounded-full" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-red-200 rounded-lg p-4">
+                        <p class="text-gray-600">B+</p>
+                        <h3 class="text-2xl font-bold text-gray-900">45 units</h3>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-600 h-2 rounded-full" style="width: 30%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="border border-red-200 rounded-lg p-4">
+                        <p class="text-gray-600">AB+</p>
+                        <h3 class="text-2xl font-bold text-gray-900">25 units</h3>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-red-600 h-2 rounded-full" style="width: 20%"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <!-- Add Donor Modal -->
+    <div id="addDonorModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Add New Donor</h2>
+                <button id="closeAddDonorModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <form id="addDonorForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                    <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+                    <input type="tel" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                    <input type="date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Address</label>
+                    <textarea rows="3" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"></textarea>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                    Add Donor
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Process Blood Request Modal -->
+    <div id="processRequestModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Process Blood Request</h2>
+                <button id="closeProcessRequestModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <form id="processRequestForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Hospital Name</label>
+                    <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Blood Group</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Quantity (units)</label>
+                    <input type="number" min="1" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Urgency</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="normal">Normal</option>
+                        <option value="urgent">Urgent</option>
+                        <option value="emergency">Emergency</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                    Process Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Schedule Appointment Modal -->
+    <div id="scheduleAppointmentModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Schedule Appointment</h2>
+                <button id="closeScheduleAppointmentModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <form id="scheduleAppointmentForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Donor Name</label>
+                    <input type="text" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                    <input type="time" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Location</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="">Select Location</option>
+                        <option value="main">Main Blood Bank</option>
+                        <option value="mobile1">Mobile Unit 1</option>
+                        <option value="mobile2">Mobile Unit 2</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                    Schedule Appointment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Generate Report Modal -->
+    <div id="generateReportModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-8 max-w-md w-full mx-4">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold text-gray-900">Generate Report</h2>
+                <button id="closeGenerateReportModal" class="text-gray-400 hover:text-gray-600">
+                    <i class="ri-close-line text-2xl"></i>
+                </button>
+            </div>
+            <form id="generateReportForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Report Type</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="">Select Report Type</option>
+                        <option value="donations">Donations Report</option>
+                        <option value="inventory">Inventory Report</option>
+                        <option value="requests">Blood Requests Report</option>
+                        <option value="appointments">Appointments Report</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date Range</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <input type="date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600" placeholder="Start Date">
+                        <input type="date" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600" placeholder="End Date">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Format</label>
+                    <select required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        <option value="pdf">PDF</option>
+                        <option value="excel">Excel</option>
+                        <option value="csv">CSV</option>
+                    </select>
+                </div>
+                <button type="submit" class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                    Generate Report
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Check authentication
+        document.addEventListener('DOMContentLoaded', () => {
+            const adminData = JSON.parse(localStorage.getItem('adminData'));
+            
+            if (!adminData) {
+                window.location.href = '01_webpage.html';
+                return;
+            }
+
+            // Display admin name
+            document.getElementById('adminNameDisplay').textContent = adminData.name;
+
+            // Profile dropdown functionality
+            const adminProfileBtn = document.getElementById('adminProfileBtn');
+            const profileDropdown = document.getElementById('profileDropdown');
+            const logoutBtn = document.getElementById('logoutBtn');
+
+            adminProfileBtn.addEventListener('click', () => {
+                profileDropdown.classList.toggle('hidden');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (!adminProfileBtn.contains(e.target) && !profileDropdown.contains(e.target)) {
+                    profileDropdown.classList.add('hidden');
+                }
+            });
+
+            logoutBtn.addEventListener('click', () => {
+                localStorage.removeItem('adminData');
+                window.location.href = '01_webpage.html';
+            });
+
+            // Modal functionality
+            const modals = {
+                addDonor: {
+                    modal: document.getElementById('addDonorModal'),
+                    closeBtn: document.getElementById('closeAddDonorModal'),
+                    form: document.getElementById('addDonorForm')
+                },
+                processRequest: {
+                    modal: document.getElementById('processRequestModal'),
+                    closeBtn: document.getElementById('closeProcessRequestModal'),
+                    form: document.getElementById('processRequestForm')
+                },
+                scheduleAppointment: {
+                    modal: document.getElementById('scheduleAppointmentModal'),
+                    closeBtn: document.getElementById('closeScheduleAppointmentModal'),
+                    form: document.getElementById('scheduleAppointmentForm')
+                },
+                generateReport: {
+                    modal: document.getElementById('generateReportModal'),
+                    closeBtn: document.getElementById('closeGenerateReportModal'),
+                    form: document.getElementById('generateReportForm')
+                }
+            };
+
+            // Open modal buttons
+            document.getElementById('addDonorBtn').addEventListener('click', () => {
+                modals.addDonor.modal.classList.remove('hidden');
+                modals.addDonor.modal.classList.add('flex');
+            });
+
+            document.getElementById('processRequestBtn').addEventListener('click', () => {
+                modals.processRequest.modal.classList.remove('hidden');
+                modals.processRequest.modal.classList.add('flex');
+            });
+
+            document.getElementById('scheduleAppointmentBtn').addEventListener('click', () => {
+                modals.scheduleAppointment.modal.classList.remove('hidden');
+                modals.scheduleAppointment.modal.classList.add('flex');
+            });
+
+            document.getElementById('generateReportBtn').addEventListener('click', () => {
+                modals.generateReport.modal.classList.remove('hidden');
+                modals.generateReport.modal.classList.add('flex');
+            });
+
+            // Close modal buttons
+            Object.values(modals).forEach(({modal, closeBtn}) => {
+                closeBtn.addEventListener('click', () => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                });
+            });
+
+            // Form submissions
+            modals.addDonor.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Handle donor addition
+                alert('Donor added successfully!');
+                modals.addDonor.modal.classList.add('hidden');
+                modals.addDonor.modal.classList.remove('flex');
+            });
+
+            modals.processRequest.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Handle blood request processing
+                alert('Blood request processed successfully!');
+                modals.processRequest.modal.classList.add('hidden');
+                modals.processRequest.modal.classList.remove('flex');
+            });
+
+            modals.scheduleAppointment.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Handle appointment scheduling
+                alert('Appointment scheduled successfully!');
+                modals.scheduleAppointment.modal.classList.add('hidden');
+                modals.scheduleAppointment.modal.classList.remove('flex');
+            });
+
+            modals.generateReport.form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Handle report generation
+                alert('Report generated successfully!');
+                modals.generateReport.modal.classList.add('hidden');
+                modals.generateReport.modal.classList.remove('flex');
+            });
+
+            // Notifications functionality
+            const notificationsBtn = document.getElementById('notificationsBtn');
+            const notificationsDropdown = document.getElementById('notificationsDropdown');
+            const notificationBadge = document.getElementById('notificationBadge');
+            const markAllReadBtn = document.getElementById('markAllReadBtn');
+            const notificationItems = document.querySelectorAll('.notification-item');
+
+            // Toggle notifications dropdown
+            notificationsBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                notificationsDropdown.classList.toggle('hidden');
+            });
+
+            // Close notifications when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!notificationsBtn.contains(e.target) && !notificationsDropdown.contains(e.target)) {
+                    notificationsDropdown.classList.add('hidden');
+                }
+            });
+
+            // Mark all notifications as read
+            markAllReadBtn.addEventListener('click', () => {
+                notificationBadge.textContent = '0';
+                notificationBadge.classList.add('hidden');
+                notificationItems.forEach(item => {
+                    item.classList.add('opacity-50');
+                });
+            });
+
+            // Handle individual notification clicks
+            notificationItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    // Update notification count
+                    const currentCount = parseInt(notificationBadge.textContent);
+                    if (currentCount > 0) {
+                        notificationBadge.textContent = (currentCount - 1).toString();
+                        if (currentCount - 1 === 0) {
+                            notificationBadge.classList.add('hidden');
+                        }
+                    }
+                    // Mark as read
+                    item.classList.add('opacity-50');
+                });
+            });
+        });
+    </script>
+</body>
+</html> 

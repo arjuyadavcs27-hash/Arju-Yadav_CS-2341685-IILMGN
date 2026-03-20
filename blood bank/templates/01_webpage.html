@@ -1,0 +1,322 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid p-0">
+    <!-- Hero Section -->
+    <div class="hero-section position-relative">
+        <div class="hero-overlay"></div>
+        <div class="container position-relative">
+            <div class="row min-vh-100 align-items-center">
+                <div class="col-md-6">
+                    <h1 class="display-4 text-white fw-bold mb-4">Save Lives, Donate Blood</h1>
+                    <p class="lead text-white mb-5">Join our community of blood donors and help save lives across India. Your donation can make a difference.</p>
+                    <div class="d-flex gap-3">
+                        <a href="{{ url_for('donor_registration') }}" class="btn btn-danger btn-lg">Become a Donor</a>
+                        <a href="{{ url_for('blood_bank.register') }}" class="btn btn-outline-light btn-lg">Register Blood Bank</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Section -->
+    <div class="search-section py-5 bg-light">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-10">
+                    <div class="card shadow">
+                        <div class="card-header bg-danger text-white">
+                            <h3 class="text-center mb-0">Find Blood Banks and Donors</h3>
+                        </div>
+                        <div class="card-body">
+                            <form id="searchForm" class="mb-4">
+                                <div class="row">
+                                    <div class="col-md-4 mb-3">
+                                        <label for="state" class="form-label">State</label>
+                                        <select class="form-select" id="state" name="state_id" required>
+                                            <option value="">Select State</option>
+                                            {% for state in states %}
+                                                <option value="{{ state.id }}">{{ state.name }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="city" class="form-label">City</label>
+                                        <select class="form-select" id="city" name="city_id" required disabled>
+                                            <option value="">Select City</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-4 mb-3">
+                                        <label for="blood_group" class="form-label">Blood Group</label>
+                                        <select class="form-select" id="blood_group" name="blood_group">
+                                            <option value="">All Blood Groups</option>
+                                            <option value="A+">A+</option>
+                                            <option value="A-">A-</option>
+                                            <option value="B+">B+</option>
+                                            <option value="B-">B-</option>
+                                            <option value="AB+">AB+</option>
+                                            <option value="AB-">AB-</option>
+                                            <option value="O+">O+</option>
+                                            <option value="O-">O-</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label for="search_type" class="form-label">Search For</label>
+                                        <select class="form-select" id="search_type" name="search_type" required>
+                                            <option value="blood_bank">Blood Banks</option>
+                                            <option value="donor">Donors</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">&nbsp;</label>
+                                        <button type="submit" class="btn btn-danger w-100">Search</button>
+                                    </div>
+                                </div>
+                            </form>
+                            
+                            <div id="searchResults">
+                                <!-- Results will be displayed here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features Section -->
+    <div class="features-section py-5">
+        <div class="container">
+            <h2 class="text-center mb-5">Why Donate Blood?</h2>
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-heartbeat fa-3x text-danger mb-3"></i>
+                            <h4 class="card-title">Save Lives</h4>
+                            <p class="card-text">Your blood donation can save up to three lives. Every donation counts.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-shield-alt fa-3x text-danger mb-3"></i>
+                            <h4 class="card-title">Safe Process</h4>
+                            <p class="card-text">Our donation process is safe, hygienic, and supervised by medical professionals.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 border-0 shadow-sm">
+                        <div class="card-body text-center">
+                            <i class="fas fa-users fa-3x text-danger mb-3"></i>
+                            <h4 class="card-title">Join Community</h4>
+                            <p class="card-text">Become part of a community dedicated to saving lives across India.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics Section -->
+    <div class="statistics-section py-5 bg-light">
+        <div class="container">
+            <div class="row text-center">
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 text-danger">1000+</h2>
+                    <p class="lead">Blood Banks</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 text-danger">50,000+</h2>
+                    <p class="lead">Active Donors</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 text-danger">1M+</h2>
+                    <p class="lead">Lives Saved</p>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <h2 class="display-4 text-danger">28</h2>
+                    <p class="lead">States Covered</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stateSelect = document.getElementById('state');
+    const citySelect = document.getElementById('city');
+    const searchForm = document.getElementById('searchForm');
+    const searchResults = document.getElementById('searchResults');
+    
+    // City selection based on state
+    stateSelect.addEventListener('change', function() {
+        const stateId = this.value;
+        citySelect.disabled = !stateId;
+        
+        if (stateId) {
+            fetch(`/api/cities/${stateId}`)
+                .then(response => response.json())
+                .then(cities => {
+                    citySelect.innerHTML = '<option value="">Select City</option>';
+                    cities.forEach(city => {
+                        const option = document.createElement('option');
+                        option.value = city.id;
+                        option.textContent = city.name;
+                        citySelect.appendChild(option);
+                    });
+                });
+        } else {
+            citySelect.innerHTML = '<option value="">Select City</option>';
+        }
+    });
+    
+    // Handle form submission
+    searchForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const searchType = formData.get('search_type');
+        const cityId = formData.get('city_id');
+        const bloodGroup = formData.get('blood_group');
+        
+        if (searchType === 'blood_bank') {
+            fetch(`/api/blood-banks?city_id=${cityId}&blood_group=${bloodGroup}`)
+                .then(response => response.json())
+                .then(data => displayBloodBanks(data));
+        } else {
+            fetch(`/api/donors?city_id=${cityId}&blood_group=${bloodGroup}`)
+                .then(response => response.json())
+                .then(data => displayDonors(data));
+        }
+    });
+    
+    function displayBloodBanks(bloodBanks) {
+        if (bloodBanks.length === 0) {
+            searchResults.innerHTML = '<div class="alert alert-info">No blood banks found</div>';
+            return;
+        }
+        
+        let html = '<div class="row">';
+        bloodBanks.forEach(bank => {
+            html += `
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">${bank.name}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Address:</strong> ${bank.address}</p>
+                            <p><strong>City:</strong> ${bank.city}</p>
+                            <p><strong>Contact:</strong> ${bank.contact_number}</p>
+                            <p><strong>Email:</strong> ${bank.email}</p>
+                            <p><strong>Available Blood Groups:</strong> ${bank.available_blood_groups.join(', ')}</p>
+                            <a href="/blood-bank/${bank.id}" class="btn btn-danger">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        searchResults.innerHTML = html;
+    }
+    
+    function displayDonors(donors) {
+        if (donors.length === 0) {
+            searchResults.innerHTML = '<div class="alert alert-info">No donors found</div>';
+            return;
+        }
+        
+        let html = '<div class="row">';
+        donors.forEach(donor => {
+            html += `
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">${donor.name}</h5>
+                        </div>
+                        <div class="card-body">
+                            <p><strong>Blood Group:</strong> ${donor.blood_group}</p>
+                            <p><strong>City:</strong> ${donor.city}</p>
+                            <p><strong>Contact:</strong> ${donor.phone}</p>
+                            <p><strong>Last Donation:</strong> ${donor.last_donation_date || 'Never'}</p>
+                            <p><strong>Status:</strong> ${donor.is_available ? 'Available' : 'Unavailable'}</p>
+                            <a href="/donor/${donor.id}" class="btn btn-danger">View Profile</a>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+        searchResults.innerHTML = html;
+    }
+});
+</script>
+
+<style>
+.hero-section {
+    background: url('/static/images/hero-bg.jpg') no-repeat center center;
+    background-size: cover;
+    min-height: 100vh;
+}
+
+.hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.search-section {
+    margin-top: -100px;
+    position: relative;
+    z-index: 1;
+}
+
+.card {
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.card-header {
+    border-radius: 15px 15px 0 0 !important;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    border-color: #dc3545;
+}
+
+.btn-danger:hover {
+    background-color: #c82333;
+    border-color: #bd2130;
+}
+
+.features-section .card {
+    transition: transform 0.3s ease;
+}
+
+.features-section .card:hover {
+    transform: translateY(-5px);
+}
+
+.statistics-section h2 {
+    font-weight: 700;
+}
+
+.statistics-section p {
+    color: #6c757d;
+}
+</style>
+{% endblock %} 

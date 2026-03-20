@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Registration - LifeFlow Blood Bank</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-['Pacifico'] text-red-600">LifeFlow</h1>
+            </div>
+            <nav class="hidden md:flex space-x-8">
+                <a href="/" class="text-gray-600 hover:text-red-600 transition-colors">Home</a>
+                <a href="/about" class="text-gray-600 hover:text-red-600 transition-colors">About</a>
+                <a href="/donate" class="text-gray-600 hover:text-red-600 transition-colors">Donate</a>
+                <a href="/contact" class="text-gray-600 hover:text-red-600 transition-colors">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Admin Registration Section -->
+    <section class="min-h-screen py-20 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-md mx-auto bg-white rounded-lg shadow-sm p-8">
+                <div class="text-center mb-8">
+                    <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <i class="ri-admin-fill text-red-600 text-2xl"></i>
+                    </div>
+                    <h2 class="text-3xl font-bold text-gray-900">Admin Registration</h2>
+                    <p class="text-gray-600 mt-2">Create a new admin account</p>
+                </div>
+
+                <form class="space-y-6" id="adminRegisterForm">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Username</label>
+                        <input type="text" id="adminUsername" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Enter username (Blood@123)">
+                        <p class="text-xs text-gray-500 mt-1">Username must be: Blood@123</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <input type="text" id="adminName" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Enter your full name">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                        <input type="email" id="adminEmail" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Enter your email">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                        <input type="password" id="adminPassword" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Enter password (Bank@2511)">
+                        <p class="text-xs text-gray-500 mt-1">Password must be: Bank@2511</p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                        <input type="password" id="adminConfirmPassword" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Confirm your password">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Admin Code</label>
+                        <input type="text" id="adminCode" required 
+                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600"
+                            placeholder="Enter admin registration code">
+                        <p class="text-xs text-gray-500 mt-1">Contact system administrator for the registration code</p>
+                    </div>
+                    <div class="flex items-center">
+                        <input type="checkbox" id="termsAgreement" required 
+                            class="h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded">
+                        <label for="termsAgreement" class="ml-2 block text-sm text-gray-700">
+                            I agree to the <a href="/terms" class="text-red-600 hover:text-red-700">Terms of Service</a> and 
+                            <a href="/privacy" class="text-red-600 hover:text-red-700">Privacy Policy</a>
+                        </label>
+                    </div>
+                    <button type="submit" 
+                        class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center">
+                        <i class="ri-user-add-line mr-2"></i>
+                        Register Admin Account
+                    </button>
+                </form>
+
+                <!-- Error Message Container -->
+                <div id="errorMessage" class="mt-4 hidden">
+                    <div class="bg-red-50 border border-red-200 text-red-600 px-4 py-3 rounded-lg text-sm">
+                        <i class="ri-error-warning-line mr-2"></i>
+                        <span id="errorText"></span>
+                    </div>
+                </div>
+
+                <!-- Success Message Container -->
+                <div id="successMessage" class="mt-4 hidden">
+                    <div class="bg-green-50 border border-green-200 text-green-600 px-4 py-3 rounded-lg text-sm">
+                        <i class="ri-checkbox-circle-line mr-2"></i>
+                        <span id="successText"></span>
+                    </div>
+                </div>
+
+                <div class="mt-6 text-center">
+                    <p class="text-gray-600">Already have an admin account? 
+                        <a href="/admin/login" class="text-red-600 hover:text-red-700 font-medium">Login here</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-['Pacifico'] text-white">LifeFlow</h1>
+                    </div>
+                    <p class="text-gray-400">Saving lives through blood donation.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="/" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="/about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="/donate" class="text-gray-400 hover:text-white transition-colors">Donate</a></li>
+                        <li><a href="/contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-map-pin-line mr-2"></i>
+                            123 Blood Bank Street, City
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-phone-line mr-2"></i>
+                            +91 12345 67890
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-mail-line mr-2"></i>
+                            info@lifeflow.in
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-facebook-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-twitter-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-instagram-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-linkedin-fill text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 LifeFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let isSubmitting = false;
+        const REQUIRED_USERNAME = 'Blood@123';
+        const REQUIRED_PASSWORD = 'Bank@2511';
+
+        document.getElementById('adminRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Prevent multiple submissions
+            if (isSubmitting) {
+                return;
+            }
+            
+            isSubmitting = true;
+            
+            // Disable submit button and show loading state
+            const submitButton = document.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.innerHTML;
+            submitButton.disabled = true;
+            submitButton.innerHTML = `
+                <i class="ri-loader-4-line animate-spin mr-2"></i>
+                Processing...
+            `;
+            
+            const username = document.getElementById('adminUsername').value;
+            const name = document.getElementById('adminName').value;
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('adminConfirmPassword').value;
+            const adminCode = document.getElementById('adminCode').value;
+            
+            // Clear any previous messages
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            errorMessage.classList.add('hidden');
+            successMessage.classList.add('hidden');
+            
+            // Validate username
+            if (username !== REQUIRED_USERNAME) {
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = 'Invalid username. Please use the correct username.';
+                isSubmitting = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+                return;
+            }
+            
+            // Validate password
+            if (password !== REQUIRED_PASSWORD) {
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = 'Invalid password. Please use the correct password.';
+                isSubmitting = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+                return;
+            }
+            
+            // Validate passwords match
+            if (password !== confirmPassword) {
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = 'Passwords do not match';
+                isSubmitting = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+                return;
+            }
+            
+            try {
+                const response = await fetch('/admin/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username,
+                        name,
+                        email,
+                        password,
+                        adminCode
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    successMessage.classList.remove('hidden');
+                    document.getElementById('successText').textContent = data.message;
+                    
+                    // Clear form
+                    document.getElementById('adminRegisterForm').reset();
+                    
+                    // Redirect to admin dashboard after 2 seconds
+                    setTimeout(() => {
+                        window.location.href = '/admin/dashboard';
+                    }, 2000);
+                } else {
+                    errorMessage.classList.remove('hidden');
+                    document.getElementById('errorText').textContent = data.message;
+                }
+            } catch (error) {
+                errorMessage.classList.remove('hidden');
+                document.getElementById('errorText').textContent = 'An error occurred. Please try again.';
+                console.error('Error:', error);
+            } finally {
+                // Reset button state
+                isSubmitting = false;
+                submitButton.disabled = false;
+                submitButton.innerHTML = originalButtonText;
+            }
+        });
+
+        // Add input validation for username and password
+        document.getElementById('adminUsername').addEventListener('input', function() {
+            if (this.value === REQUIRED_USERNAME) {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-green-500');
+            } else {
+                this.classList.remove('border-green-500');
+                this.classList.add('border-red-500');
+            }
+        });
+
+        document.getElementById('adminPassword').addEventListener('input', function() {
+            if (this.value === REQUIRED_PASSWORD) {
+                this.classList.remove('border-red-500');
+                this.classList.add('border-green-500');
+            } else {
+                this.classList.remove('border-green-500');
+                this.classList.add('border-red-500');
+            }
+        });
+
+        // Add click handlers for login/register links
+        document.querySelectorAll('a[href="/admin/login"], a[href="/admin/register"]').forEach(link => {
+            link.addEventListener('click', function(e) {
+                if (isSubmitting) {
+                    e.preventDefault();
+                    return;
+                }
+            });
+        });
+    </script>
+</body>
+</html> 

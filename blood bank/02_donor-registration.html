@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donor Registration - LifeFlow</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.5.0/fonts/remixicon.css" rel="stylesheet">
+    <script>
+        // Form validation and submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.querySelector('form');
+            const errorMessage = document.getElementById('errorMessage');
+            const errorText = document.getElementById('errorText');
+            const successMessage = document.getElementById('successMessage');
+            const successText = document.getElementById('successText');
+            const submitButton = form.querySelector('button[type="submit"]');
+
+            form.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = `
+                    <i class="ri-loader-4-line animate-spin mr-2"></i>
+                    Registering...
+                `;
+                
+                // Basic form validation
+                const requiredFields = form.querySelectorAll('[required]');
+                let isValid = true;
+                
+                requiredFields.forEach(field => {
+                    if (!field.value) {
+                        isValid = false;
+                        field.classList.add('border-red-500');
+                    } else {
+                        field.classList.remove('border-red-500');
+                    }
+                });
+
+                if (isValid) {
+                    try {
+                        // Create form data object
+                        const formData = new FormData(form);
+                        
+                        // Convert FormData to JSON
+                        const jsonData = {};
+                        formData.forEach((value, key) => {
+                            jsonData[key] = value;
+                        });
+
+                        // Add additional fields
+                        jsonData['health_status'] = 'Pending';
+                        jsonData['is_available'] = true;
+
+                        // Send the request
+                        const response = await fetch('/donor/register', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify(jsonData)
+                        });
+                        
+                        const data = await response.json();
+                        
+                        if (response.ok) {
+                            // Show success message
+                            successMessage.classList.remove('hidden');
+                            successText.textContent = data.message || 'Registration successful!';
+                            errorMessage.classList.add('hidden');
+                            
+                            // Reset form
+                            form.reset();
+                            
+                            // Redirect after 2 seconds
+                            setTimeout(() => {
+                                window.location.href = data.redirect || '06_donor-dashboard.html';
+                            }, 2000);
+                        } else {
+                            // Show error message
+                            errorMessage.classList.remove('hidden');
+                            errorText.textContent = data.message || 'An error occurred during registration. Please try again.';
+                            successMessage.classList.add('hidden');
+                        }
+                    } catch (error) {
+                        console.error('Registration error:', error);
+                        errorMessage.classList.remove('hidden');
+                        errorText.textContent = 'An error occurred. Please try again.';
+                        successMessage.classList.add('hidden');
+                    } finally {
+                        // Re-enable submit button
+                        submitButton.disabled = false;
+                        submitButton.innerHTML = `
+                            <i class="ri-user-add-line mr-2"></i>
+                            Register as Donor
+                        `;
+                    }
+                } else {
+                    errorMessage.classList.remove('hidden');
+                    errorText.textContent = 'Please fill in all required fields.';
+                    successMessage.classList.add('hidden');
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = `
+                        <i class="ri-user-add-line mr-2"></i>
+                        Register as Donor
+                    `;
+                }
+            });
+
+            // Add password validation
+            const password = document.querySelector('input[name="password"]');
+            const confirmPassword = document.querySelector('input[name="confirm_password"]');
+            
+            if (password && confirmPassword) {
+                confirmPassword.addEventListener('input', function() {
+                    if (password.value !== confirmPassword.value) {
+                        confirmPassword.setCustomValidity("Passwords don't match");
+                        confirmPassword.classList.add('border-red-500');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                        confirmPassword.classList.remove('border-red-500');
+                    }
+                });
+
+                password.addEventListener('input', function() {
+                    if (password.value !== confirmPassword.value) {
+                        confirmPassword.setCustomValidity("Passwords don't match");
+                        confirmPassword.classList.add('border-red-500');
+                    } else {
+                        confirmPassword.setCustomValidity('');
+                        confirmPassword.classList.remove('border-red-500');
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body class="bg-gray-50">
+    <!-- Header -->
+    <header class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                    <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                </div>
+                <h1 class="text-2xl font-['Pacifico'] text-red-600">LifeFlow</h1>
+            </div>
+            <nav class="hidden md:flex items-center space-x-6">
+                <a href="01_webpage.html" class="text-gray-800 hover:text-red-600 transition-colors">Home</a>
+                <a href="01_webpage.html#about" class="text-gray-600 hover:text-red-600 transition-colors">About</a>
+                <a href="01_webpage.html#donate" class="text-gray-600 hover:text-red-600 transition-colors">Donate</a>
+                <a href="01_webpage.html#contact" class="text-gray-600 hover:text-red-600 transition-colors">Contact</a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Registration Form -->
+    <section class="py-20">
+        <div class="container mx-auto px-4">
+            <div class="max-w-2xl mx-auto bg-white rounded-lg shadow-sm p-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Donor Registration</h2>
+                <div id="errorMessage" class="hidden mb-4 p-4 rounded-lg bg-red-100 text-red-700">
+                    <i class="ri-error-warning-line mr-2"></i>
+                    <span id="errorText"></span>
+                </div>
+                <div id="successMessage" class="hidden mb-4 p-4 rounded-lg bg-green-100 text-green-700">
+                    <i class="ri-checkbox-circle-line mr-2"></i>
+                    <span id="successText"></span>
+                </div>
+                <form class="space-y-6" action="/donor/register" method="POST">
+                    <!-- Personal Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Personal Information</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">First Name</label>
+                                <input type="text" name="first_name" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Last Name</label>
+                                <input type="text" name="last_name" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                            <input type="email" name="email" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
+                            <input type="tel" name="phone" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Password</label>
+                            <input type="password" name="password" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+                            <input type="password" name="confirm_password" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                    </div>
+
+                    <!-- Address Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Address Information</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Street Address</label>
+                            <input type="text" name="street_address" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">City</label>
+                                <input type="text" name="city" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">State</label>
+                                <input type="text" name="state" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">ZIP Code</label>
+                                <input type="text" name="zip_code" required 
+                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Medical Information -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Medical Information</h3>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Blood Type</label>
+                            <select name="blood_type" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                                <option value="">Select Blood Type</option>
+                                <option value="A+">A+</option>
+                                <option value="A-">A-</option>
+                                <option value="B+">B+</option>
+                                <option value="B-">B-</option>
+                                <option value="AB+">AB+</option>
+                                <option value="AB-">AB-</option>
+                                <option value="O+">O+</option>
+                                <option value="O-">O-</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>
+                            <input type="date" name="date_of_birth" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                            <select name="gender" required 
+                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-600 focus:border-red-600">
+                                <option value="">Select Gender</option>
+                                <option value="male">Male</option>
+                                <option value="female">Female</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Health Declaration -->
+                    <div class="space-y-4">
+                        <h3 class="text-xl font-semibold text-gray-900">Health Declaration</h3>
+                        <div class="space-y-2">
+                            <div class="flex items-start">
+                                <input type="checkbox" name="health_declaration" required 
+                                    class="mt-1 h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded">
+                                <label class="ml-2 text-sm text-gray-700">I confirm that I am in good health and meet the donor eligibility criteria</label>
+                            </div>
+                            <div class="flex items-start">
+                                <input type="checkbox" name="last_donation" required 
+                                    class="mt-1 h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded">
+                                <label class="ml-2 text-sm text-gray-700">I have not donated blood in the last 56 days</label>
+                            </div>
+                            <div class="flex items-start">
+                                <input type="checkbox" name="surgery_declaration" required 
+                                    class="mt-1 h-4 w-4 text-red-600 focus:ring-red-600 border-gray-300 rounded">
+                                <label class="ml-2 text-sm text-gray-700">I have not had any major surgery in the last 6 months</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" 
+                        class="w-full bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center">
+                        <i class="ri-user-add-line mr-2"></i>
+                        Register as Donor
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 bg-red-600 rounded-full flex items-center justify-center mr-3">
+                            <i class="ri-heart-pulse-fill text-white text-xl"></i>
+                        </div>
+                        <h1 class="text-2xl font-['Pacifico'] text-white">LifeFlow</h1>
+                    </div>
+                    <p class="text-gray-400">Saving lives through blood donation.</p>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="01_webpage.html" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                        <li><a href="01_webpage.html#about" class="text-gray-400 hover:text-white transition-colors">About</a></li>
+                        <li><a href="01_webpage.html#donate" class="text-gray-400 hover:text-white transition-colors">Donate</a></li>
+                        <li><a href="01_webpage.html#contact" class="text-gray-400 hover:text-white transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Contact Info</h3>
+                    <ul class="space-y-2">
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-map-pin-line mr-2"></i>
+                            123 Blood Bank Street, City
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-phone-line mr-2"></i>
+                            +1 234 567 890
+                        </li>
+                        <li class="flex items-center text-gray-400">
+                            <i class="ri-mail-line mr-2"></i>
+                            info@lifeflow.com
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-4">Follow Us</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-facebook-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-twitter-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-instagram-fill text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-400 hover:text-white transition-colors">
+                            <i class="ri-linkedin-fill text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 mt-12 pt-8 text-center">
+                <p class="text-gray-400">&copy; 2024 LifeFlow. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html> 
